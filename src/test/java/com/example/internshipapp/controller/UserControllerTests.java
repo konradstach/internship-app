@@ -38,7 +38,6 @@ public class UserControllerTests {
 
         User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 8);
         List<User> allUsers = singletonList(user);
-
         given(userController.getUsersUnpaged()).willReturn(allUsers);
         userController.createUser(user);
 
