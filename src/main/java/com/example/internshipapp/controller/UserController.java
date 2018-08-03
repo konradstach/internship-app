@@ -3,7 +3,6 @@ package com.example.internshipapp.controller;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
 import com.example.internshipapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,9 +21,8 @@ public class UserController {
 
     public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
-        this.userRepository=userRepository;
+        this.userRepository = userRepository;
     }
-
 
     @GetMapping
     @ResponseBody
@@ -34,7 +32,7 @@ public class UserController {
 
     @GetMapping("/unpaged")
     @ResponseBody
-    public List<User> getUsersUnpaged(){
+    public List<User> getUsersUnpaged() {
         return userRepository.findAll();
     }
 
@@ -53,6 +51,11 @@ public class UserController {
     @PatchMapping("/{id}")
     public void modifyUser(@PathVariable(name = "id") String id, @Valid @RequestBody User user) {
         userService.updateUser(user);
+    }
+
+    @DeleteMapping
+    public void deleteAllUsers() {
+        userService.deleteAllUsers();
     }
 
     @DeleteMapping("/{id}")

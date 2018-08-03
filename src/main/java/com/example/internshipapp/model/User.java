@@ -3,7 +3,6 @@ package com.example.internshipapp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
