@@ -3,7 +3,6 @@ package com.example.internshipapp.service;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,66 +15,64 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository){
-        this.userRepository=userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<User> getUsers(){
-        return userRepository.findAll();
-    }
-
-    public Page<User> listAllByPage(Pageable pageable){
+    public Page<User> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public User findById(String id){
-        Optional<User> userOptional = userRepository.findById(id);
-        User user = userOptional.get();
+    public List<User> getUsersUnpaged() {
+        return userRepository.findAll();
+    }
 
-        if(user!=null){
-            return user;
-        }
-        else{
-            throw new NoSuchRecordException("User with id not found");
+    public User getUserById(String id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new NoSuchRecordException("User with id = " + id + " not found");
         }
     }
 
-    public User create(String username, String password, String firstName, String lastName, double toPay){
+    public User createUser(User userToCreate) {
 
-        User user = new User(username, password, firstName, lastName, toPay);
+        User user = new User(userToCreate.getUsername(),
+                userToCreate.getPassword(),
+                userToCreate.getFirstName(),
+                userToCreate.getLastName(),
+                userToCreate.getToPay());
+
         return userRepository.save(user);
     }
 
-    public User update(String id, String username, String password, String firstName, String lastName, double toPay){
-        Optional<User> userOptional = userRepository.findById(id);
+    public User updateUser(final User userFromUi) {
+        Optional<User> userFromDb = userRepository.findById(userFromUi.getId());
 
-        if(!userOptional.isPresent()){
-         throw new NoSuchRecordException("User with given id not found");
+        if (!userFromDb.isPresent()) {
+            throw new NoSuchRecordException("User with id = " + userFromUi.getId() + " not found");
         }
 
-        User user = userOptional.get();
+        User user = userFromDb.get();
 
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setToPay(toPay);
+        user.setFirstName(userFromUi.getFirstName());
+        user.setLastName(userFromUi.getLastName());
+        user.setUsername(userFromUi.getUsername());
+        user.setPassword(userFromUi.getPassword());
+        user.setToPay(userFromUi.getToPay());
 
         return userRepository.save(user);
-
     }
 
-    public void delete(String id){
+    public void deleteUser(String id) {
         Optional<User> user = userRepository.findById(id);
 
-        if(user.isPresent()){
-            userRepository.delete(user.get());
-        }
-        else{
-            throw new NoSuchRecordException("User with given id not found");
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new NoSuchRecordException("User with id = " + id + " not found");
         }
     }
-
-
 }

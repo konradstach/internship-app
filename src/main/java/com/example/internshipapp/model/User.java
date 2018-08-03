@@ -1,9 +1,6 @@
 package com.example.internshipapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,18 +15,18 @@ public class User {
     private String id;
 
     @NotNull
-    @Size(min=3, max=50, message="Username must be 3 to 50 characters in length.")
+    @Size(min = 3, max = 50, message = "Username must be 3 to 50 characters in length.")
     private String username;
 
     @JsonIgnore
     private String password;
 
     @NotNull
-    @Size(min=3, max=50, message="First name must be 3 to 50 characters in length.")
+    @Size(min = 3, max = 50, message = "First name must be 3 to 50 characters in length.")
     private String firstName;
 
     @NotNull
-    @Size(min=3, max=80, message="Last name must be 3 to 80 characters in length.")
+    @Size(min = 3, max = 80, message = "Last name must be 3 to 80 characters in length.")
     private String lastName;
 
     private double toPay;
