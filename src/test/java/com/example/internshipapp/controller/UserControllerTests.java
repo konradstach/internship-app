@@ -1,42 +1,61 @@
 package com.example.internshipapp.controller;
 
+import com.example.internshipapp.RestResponseEntityExceptionHandler;
+import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
-import com.example.internshipapp.repository.UserRepository;
 import com.example.internshipapp.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.List;
+
 import static java.util.Collections.singletonList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(UserController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class UserControllerTests {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @InjectMocks
     private UserController userController;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .build();
+    }
+
+
+    //TODO
+    //yet don't know how to extract List<> from Page<>
     @Test
     public void getUsersTest() throws Exception {
 
-        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 8);
+        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 8, null, null);
         List<User> allUsers = singletonList(user);
         given(userController.getUsersUnpaged()).willReturn(allUsers);
         userController.createUser(user);
@@ -54,7 +73,7 @@ public class UserControllerTests {
     @Test
     public void getUserByIdTest() throws Exception {
 
-        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 5);
+        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 5, null, null);
         user.setId("abc");
 
         given(userService.getUserById(user.getId())).willReturn(user);
@@ -68,44 +87,55 @@ public class UserControllerTests {
                 .andExpect(jsonPath("$.toPay", Matchers.is(5.0)));
     }
 
-    //TODO
-    // Test fails, Http status 200, should be 404
     @Test
     public void getUserByIdWithUnknownIdTest() throws Exception {
-
-        mockMvc.perform(get("http://localhost:8080/users/bbb"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code", Matchers.is(404)));
+        doThrow(NoSuchRecordException.class).when(userService).getUserById("bbb");
+        mockMvc.perform(get("/users/bbb"))
+                .andExpect(status().isNotFound());
     }
-
 
     @Test
     public void createUserTest() throws Exception {
 
-        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 5);
+        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 5, null, null);
+
+        ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createUserInJson(user)))
+                .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isCreated());
     }
 
-
-    //TODO
-    // Test fails, Http status 200, should be 404
     @Test
-    public void deleteUserWithUnknownIdTest() throws Exception {
-        mockMvc.perform(delete("/users/{id}", 100)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code", Matchers.is(404)))
-                .andExpect(jsonPath("$.description", Matchers.is("Not found user with id: 100")));
+    public void updateTest() throws Exception {
+        User user = new User("updatedUsername", "updatedPassword", "updatedFirstName", "updatedLastName", 5, null, null);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(patch("http://localhost:8080/users/abc")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isOk());
     }
 
-    private static String createUserInJson(User user) {
-        return "{ \"username\":\"" + user.getUsername() + "\"," +
-                "\"firstName\": \"" + user.getFirstName() + "\", " +
-                "\"lastName\":\"" + user.getLastName() + "\"," +
-                "\"toPay\":\"" + user.getToPay() + "\"}";
+    @Test
+    public void deleteUserWithUnknownIdTest() throws Exception {
+        doThrow(NoSuchRecordException.class).when(userService).deleteUser("100");
+        mockMvc.perform(delete("/users/{id}", 100)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void deleteUserByIdTest() throws Exception {
+
+        User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 5, null, null);
+        user.setId("abc");
+
+        mockMvc.perform(delete("/users/{id}", "abc")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }

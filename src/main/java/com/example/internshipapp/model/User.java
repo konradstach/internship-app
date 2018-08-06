@@ -3,8 +3,10 @@ package com.example.internshipapp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 
 @Document(collection = "users")
@@ -30,12 +32,18 @@ public class User {
 
     private double toPay;
 
-    public User(String username, String password, String firstName, String lastName, double toPay) {
+    private Booking booking;
+
+    private List<Vehicle> vehicleList;
+
+    public User(@NotNull @Size(min = 3, max = 50, message = "Username must be 3 to 50 characters in length.") String username, String password, @NotNull @Size(min = 3, max = 50, message = "First name must be 3 to 50 characters in length.") String firstName, @NotNull @Size(min = 3, max = 80, message = "Last name must be 3 to 80 characters in length.") String lastName, double toPay, Booking booking, List<Vehicle> vehicleList) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.toPay = toPay;
+        this.booking = booking;
+        this.vehicleList = vehicleList;
     }
 
     public User() {
@@ -87,5 +95,21 @@ public class User {
 
     public void setToPay(double toPay) {
         this.toPay = toPay;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public List<Vehicle> getVehicleList() {
+        return vehicleList;
+    }
+
+    public void setVehicleList(List<Vehicle> vehicleList) {
+        this.vehicleList = vehicleList;
     }
 }

@@ -3,37 +3,43 @@ package com.example.internshipapp.controller;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
 import com.example.internshipapp.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private UserService userService;
-    private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger("com.example.internshipapp");
 
-    public UserController(UserService userService, UserRepository userRepository) {
+
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping
     @ResponseBody
-    public Page<User> getUsers(Pageable pageable) {
-        return userService.getUsers(pageable);
+    public Page<User> getUsers(
+            @RequestParam(value = "username", required = false, defaultValue = "") String username,
+            @PageableDefault Pageable pageable) {
+        return userService.getUsers(username, pageable);
     }
 
     @GetMapping("/unpaged")
     @ResponseBody
     public List<User> getUsersUnpaged() {
-        return userRepository.findAll();
+        return userService.getUsersUnpaged();
     }
 
     @GetMapping("/{id}")
@@ -43,6 +49,7 @@ public class UserController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
 
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
@@ -54,12 +61,14 @@ public class UserController {
     }
 
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAllUsers() {
         userService.deleteAllUsers();
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable(name = "id") String id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUserById(@PathVariable(name = "id") String id) {
         userService.deleteUser(id);
     }
 
