@@ -1,7 +1,6 @@
 package com.example.internshipapp.controller;
 
 import com.example.internshipapp.model.User;
-import com.example.internshipapp.repository.UserRepository;
 import com.example.internshipapp.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")

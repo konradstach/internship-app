@@ -21,9 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -93,7 +91,7 @@ public class UserServiceTests {
     //TODO
     //not working as expected, returns null
     @Test
-    public void updateUser(){
+    public void updateUser() {
 
         User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 8, null, null);
         user.setId("abc");
@@ -120,7 +118,7 @@ public class UserServiceTests {
 
 
     @Test
-    public void deleteUserById(){
+    public void deleteUserById() {
 
         User user = new User("testUsername", "testPassword", "testFirstName", "testLastName", 8, null, null);
         user.setId("abc");
@@ -132,7 +130,7 @@ public class UserServiceTests {
 
 
     @Test(expected = NoSuchRecordException.class)
-    public void deleteUnexistingUserShouldThrowNoSuchRecordException(){
+    public void deleteUnexistingUserShouldThrowNoSuchRecordException() {
 
         userService.deleteUser("aaa");
     }
