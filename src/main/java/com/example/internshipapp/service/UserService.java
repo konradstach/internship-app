@@ -37,11 +37,11 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            logger.info("User with id =" + id + " found.");
+            logger.info(String.format("User with id =%s found.", id));
             return userOptional.get();
         } else {
             logger.warn("User not found");
-            throw new NoSuchRecordException("User with id = " + id + " not found");
+            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
         }
     }
 
@@ -65,8 +65,8 @@ public class UserService {
 
         if (!userFromDb.isPresent()) {
 
-            logger.warn("User with id =" + userFromUi.getId() + " not found");
-            throw new NoSuchRecordException("User with id = " + userFromUi.getId() + " not found");
+            logger.warn(String.format("User with id =%s not found", userFromUi.getId()));
+            throw new NoSuchRecordException(String.format("User with id = %s not found", userFromUi.getId()));
         }
 
         User user = userFromDb.get();
@@ -77,7 +77,7 @@ public class UserService {
         user.setPassword(userFromUi.getPassword());
         user.setToPay(userFromUi.getToPay());
 
-        logger.info("User with id =" + userFromUi.getId() + " updated");
+        logger.info(String.format("User with id =%s updated", userFromUi.getId()));
         return userRepository.save(user);
     }
 
@@ -92,10 +92,10 @@ public class UserService {
 
         if (user.isPresent()) {
             userRepository.deleteById(id);
-            logger.warn("User with id =" + id + " deleted");
+            logger.warn(String.format("User with id =%s deleted", id));
         } else {
-            logger.warn("User with id = " + id + " not found");
-            throw new NoSuchRecordException("User with id = " + id + " not found");
+            logger.warn(String.format("User with id = %s not found", id));
+            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
         }
     }
 }

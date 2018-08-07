@@ -1,7 +1,7 @@
 package com.example.internshipapp.service;
 
 
-import com.example.internshipapp.RestResponseEntityExceptionHandler;
+import com.example.internshipapp.exception.RestResponseEntityExceptionHandler;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
