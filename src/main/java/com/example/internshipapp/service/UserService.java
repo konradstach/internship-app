@@ -61,7 +61,7 @@ public class UserService {
             throw new NoSuchRecordException(String.format("User with id = %s not found", userFromUi.getId()));
         }
 
-        User user = User.clone(userFromDb.get());
+        User user = User.clone(userFromUi);
 
         logger.info(String.format("User with id =%s updated", userFromUi.getId()));
         return userRepository.save(user);
