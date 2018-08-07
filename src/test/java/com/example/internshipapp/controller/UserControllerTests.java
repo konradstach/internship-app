@@ -50,7 +50,6 @@ public class UserControllerTests {
                 .build();
     }
 
-
     //TODO
     //yet don't know how to extract List<> from Page<>
     @Ignore
@@ -128,7 +127,6 @@ public class UserControllerTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     public void deleteUserByIdTest() throws Exception {
