@@ -2,16 +2,15 @@ package com.example.internshipapp.controller;
 
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -19,36 +18,46 @@ public class UserController {
 
     private UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public Page<User> getUsers (Pageable pageable){
-        Page<User> users = userService.listAllByPage(pageable);
-        return users;
+    @ResponseBody
+    public Page<User> getUsers(
+            @RequestParam(value = "username", required = false, defaultValue = "") String username,
+            @PageableDefault Pageable pageable) {
+        return userService.getUsers(username, pageable);
     }
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable(name = "id") String id) {
-        return userService.findById(id);
+    @ResponseBody
+    public User getUserById(@PathVariable(name = "id") String id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody @Valid User user) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
 
-        return new ResponseEntity<>(userService.create(user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getToPay()), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public void modifyUser(@PathVariable (name="id") String id, @Valid @RequestBody User user){
-         userService.update(id, user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getToPay());
+    public void modifyUser(@PathVariable(name = "id") String id, @Valid @RequestBody User user) {
+        userService.updateUser(user);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllUsers() {
+        userService.deleteAllUsers();
     }
 
     @DeleteMapping("/{id}")
-    public void delete (@PathVariable (name="id") String id){
-        userService.delete(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUserById(@PathVariable(name = "id") String id) {
+        userService.deleteUser(id);
     }
 
 }

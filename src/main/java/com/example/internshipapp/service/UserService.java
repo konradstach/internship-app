@@ -3,11 +3,11 @@ package com.example.internshipapp.service;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -15,67 +15,73 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    public UserService(UserRepository userRepository){
-        this.userRepository=userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<User> getUsers(){
+    public Page<User> getUsers(String username, Pageable pageable) {
+
+        logger.info("Getting all users");
+        return userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+    }
+
+    public List<User> getUsersUnpaged() {
         return userRepository.findAll();
     }
 
-    public Page<User> listAllByPage(Pageable pageable){
-        return userRepository.findAll(pageable);
-    }
+    public User getUserById(String id) {
 
-    public User findById(String id){
         Optional<User> userOptional = userRepository.findById(id);
-        User user = userOptional.get();
 
-        if(user!=null){
-            return user;
-        }
-        else{
-            throw new NoSuchRecordException("User with id not found");
+        if (userOptional.isPresent()) {
+            logger.info(String.format("User with id =%s found.", id));
+            return userOptional.get();
+        } else {
+            logger.warn(String.format("User with id =%s not found.", id));
+            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
         }
     }
 
-    public User create(String username, String password, String firstName, String lastName, double toPay){
+    public User createUser(User userToCreate) {
 
-        User user = new User(username, password, firstName, lastName, toPay);
+        User user = User.clone(userToCreate);
+        logger.info("New user created");
         return userRepository.save(user);
     }
 
-    public User update(String id, String username, String password, String firstName, String lastName, double toPay){
-        Optional<User> userOptional = userRepository.findById(id);
+    public User updateUser(final User userFromUi) {
 
-        if(!userOptional.isPresent()){
-         throw new NoSuchRecordException("User with given id not found");
+        Optional<User> userFromDb = userRepository.findById(userFromUi.getId());
+
+        if (!userFromDb.isPresent()) {
+
+            logger.warn(String.format("User with id =%s not found", userFromUi.getId()));
+            throw new NoSuchRecordException(String.format("User with id = %s not found", userFromUi.getId()));
         }
 
-        User user = userOptional.get();
+        User user = User.clone(userFromUi);
 
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setToPay(toPay);
-
+        logger.info(String.format("User with id =%s updated", userFromUi.getId()));
         return userRepository.save(user);
-
     }
 
-    public void delete(String id){
+    public void deleteAllUsers() {
+
+        userRepository.deleteAll();
+        logger.warn("All users deleted");
+    }
+
+    public void deleteUser(String id) {
         Optional<User> user = userRepository.findById(id);
 
-        if(user.isPresent()){
-            userRepository.delete(user.get());
-        }
-        else{
-            throw new NoSuchRecordException("User with given id not found");
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            logger.warn(String.format("User with id =%s deleted", id));
+        } else {
+            logger.warn(String.format("User with id = %s not found", id));
+            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
         }
     }
-
-
 }
