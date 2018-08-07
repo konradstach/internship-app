@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -40,21 +39,14 @@ public class UserService {
             logger.info(String.format("User with id =%s found.", id));
             return userOptional.get();
         } else {
-            logger.warn("User not found");
+            logger.warn(String.format("User with id =%s not found.", id));
             throw new NoSuchRecordException(String.format("User with id = %s not found", id));
         }
     }
 
     public User createUser(User userToCreate) {
 
-        User user = new User(userToCreate.getUsername(),
-                userToCreate.getPassword(),
-                userToCreate.getFirstName(),
-                userToCreate.getLastName(),
-                userToCreate.getToPay(),
-                userToCreate.getBooking(),
-                userToCreate.getVehicleList());
-
+        User user = User.clone(userToCreate);
         logger.info("New user created");
         return userRepository.save(user);
     }
@@ -69,13 +61,7 @@ public class UserService {
             throw new NoSuchRecordException(String.format("User with id = %s not found", userFromUi.getId()));
         }
 
-        User user = userFromDb.get();
-
-        user.setFirstName(userFromUi.getFirstName());
-        user.setLastName(userFromUi.getLastName());
-        user.setUsername(userFromUi.getUsername());
-        user.setPassword(userFromUi.getPassword());
-        user.setToPay(userFromUi.getToPay());
+        User user = User.clone(userFromDb.get());
 
         logger.info(String.format("User with id =%s updated", userFromUi.getId()));
         return userRepository.save(user);

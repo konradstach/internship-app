@@ -1,5 +1,6 @@
-package com.example.internshipapp.exception;
+package com.example.internshipapp.controller;
 
+import com.example.internshipapp.exception.NoSuchRecordException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

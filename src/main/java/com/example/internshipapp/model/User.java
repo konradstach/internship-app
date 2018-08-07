@@ -32,18 +32,12 @@ public class User {
 
     private double toPay;
 
-    private Booking booking;
-
-    private List<Vehicle> vehicleList;
-
-    public User(@NotNull @Size(min = 3, max = 50, message = "Username must be 3 to 50 characters in length.") String username, String password, @NotNull @Size(min = 3, max = 50, message = "First name must be 3 to 50 characters in length.") String firstName, @NotNull @Size(min = 3, max = 80, message = "Last name must be 3 to 80 characters in length.") String lastName, double toPay, Booking booking, List<Vehicle> vehicleList) {
+    public User(@NotNull @Size(min = 3, max = 50, message = "Username must be 3 to 50 characters in length.") String username, String password, @NotNull @Size(min = 3, max = 50, message = "First name must be 3 to 50 characters in length.") String firstName, @NotNull @Size(min = 3, max = 80, message = "Last name must be 3 to 80 characters in length.") String lastName, double toPay) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.toPay = toPay;
-        this.booking = booking;
-        this.vehicleList = vehicleList;
     }
 
     public User() {
@@ -97,19 +91,15 @@ public class User {
         this.toPay = toPay;
     }
 
-    public Booking getBooking() {
-        return booking;
-    }
+    public static User clone(User sourceUser) {
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public List<Vehicle> getVehicleList() {
-        return vehicleList;
-    }
-
-    public void setVehicleList(List<Vehicle> vehicleList) {
-        this.vehicleList = vehicleList;
+        User user = new User();
+        user.setId(sourceUser.getId());
+        user.setUsername(sourceUser.getUsername());
+        user.setPassword(sourceUser.getPassword());
+        user.setFirstName(sourceUser.getFirstName());
+        user.setLastName(sourceUser.getLastName());
+        user.setToPay(sourceUser.getToPay());
+        return user;
     }
 }
