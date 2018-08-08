@@ -1,18 +1,15 @@
 package com.example.internshipapp.controller;
 
-import com.example.internshipapp.model.Booking;
+import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.service.BookingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
@@ -24,49 +21,29 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-//    private void handleValidationErrors(BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            String[] suppressedFields = bindingResult.getSuppressedFields();
-//            for (int i = 0; i < suppressedFields.length; i++) {
-//                       System.out.println(suppressedFields[i]);
-//            }
-//        }
-//    }
-
     @GetMapping
     @ResponseBody
-    public Page<Booking> getBookings(@PageableDefault Pageable pageable) {
-        return bookingService.getBookings(pageable);
-    }
-
-    @GetMapping("/now")
-    public LocalDateTime getTime() {
-        return LocalDateTime.now();
-    }
-
-    @GetMapping("/unpaged")
-    @ResponseBody
-    public List<Booking> getBookingsUnpaged() {
-        return bookingService.getBookingsUnpaged();
+    public Page<BookingDto> getBookings(@PageableDefault Pageable pageRequest) {
+        return bookingService.getBookings(pageRequest);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Booking getBookingById(@PathVariable(name = "id") String id) {
+    public BookingDto getBookingById(@PathVariable(name = "id") String id) {
         return bookingService.getBookingById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Booking> createUser(@RequestBody @Valid Booking booking) {
-        
-        return new ResponseEntity<>(bookingService.createBooking(booking), HttpStatus.CREATED);
+    public ResponseEntity<BookingDto> createUser(@RequestBody @Valid BookingDto bookingDto) {
+
+        return new ResponseEntity<>(bookingService.createBooking(bookingDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public void modifyBooking(@PathVariable(name = "id") String id, @Valid @RequestBody Booking booking) {
+    public ResponseEntity<BookingDto> updateBooking(@PathVariable(name = "id") String id, @Valid @RequestBody BookingDto bookingDto) {
 
-        bookingService.updateBooking(booking);
+        return new ResponseEntity<>(bookingService.updateBooking(bookingDto), HttpStatus.OK);
     }
 
     @DeleteMapping
@@ -80,6 +57,4 @@ public class BookingController {
     public void deleteBookingById(@PathVariable(name = "id") String id) {
         bookingService.deleteBooking(id);
     }
-
-
 }

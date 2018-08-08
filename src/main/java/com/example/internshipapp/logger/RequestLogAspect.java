@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 
 @Aspect
@@ -21,7 +22,9 @@ public class RequestLogAspect {
 
     @Pointcut("within(com.example.internshipapp.controller..*)")
     public void controllerClassMethods() {
-    };
+    }
+
+    ;
 
     @Around("controllerClassMethods()")
     public Object log(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {

@@ -1,6 +1,8 @@
 package com.example.internshipapp.service;
 
+import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.exception.NoSuchRecordException;
+import com.example.internshipapp.mapper.BookingMapper;
 import com.example.internshipapp.model.Booking;
 import com.example.internshipapp.repository.BookingRepository;
 import org.slf4j.Logger;
@@ -9,49 +11,46 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BookingService {
 
+    private BookingMapper bookingMapper;
     private BookingRepository bookingRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public BookingService(BookingRepository bookingRepository) {
+    public BookingService(BookingMapper bookingMapper, BookingRepository bookingRepository) {
+        this.bookingMapper = bookingMapper;
         this.bookingRepository = bookingRepository;
     }
 
-    public Page<Booking> getBookings(Pageable pageable) {
-        logger.info("Getting all bookings");
-        return bookingRepository.findAll(pageable);
+    public Page<BookingDto> getBookings(Pageable pageable) {
+        logger.info(String.format("Getting all bookings from page number %d", pageable.getPageNumber()));
+        return bookingMapper.pageToDtos(bookingRepository.findAll(pageable));
     }
 
-    public List<Booking> getBookingsUnpaged() {
-        return bookingRepository.findAll();
-    }
-
-    public Booking getBookingById(String id) {
+    public BookingDto getBookingById(String id) {
 
         Optional<Booking> bookingOptional = bookingRepository.findById(id);
 
         if (bookingOptional.isPresent()) {
             logger.info(String.format("Booking with id =%s found.", id));
-            return bookingOptional.get();
+            return bookingMapper.toDto(bookingRepository.getById(id));
         } else {
             logger.warn(String.format("Booking with id =%s not found.", id));
             throw new NoSuchRecordException(String.format("Booking with id = %s not found", id));
         }
     }
 
-    public Booking createBooking(Booking bookingToCreate) {
+    public BookingDto createBooking(final BookingDto bookingDto) {
 
-        Booking booking = Booking.clone(bookingToCreate);
         logger.info("New booking created");
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(bookingMapper.toEntity(bookingDto));
+        return bookingMapper.toDto(savedBooking);
     }
 
-    public Booking updateBooking(final Booking bookingFromUi) {
+    public BookingDto updateBooking(final BookingDto bookingFromUi) {
 
         Optional<Booking> bookingFromDb = bookingRepository.findById(bookingFromUi.getId());
 
@@ -59,10 +58,11 @@ public class BookingService {
             throw new NoSuchRecordException(String.format("Booking with id = %s not found", bookingFromUi.getId()));
         }
 
-        Booking booking = Booking.clone(bookingFromUi);
+        Booking booking = bookingMapper.toEntity(bookingFromUi);
         logger.info(String.format("Booking with id =%s updated", bookingFromUi.getId()));
 
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+        return bookingMapper.toDto(savedBooking);
     }
 
     public void deleteAllBookings() {

@@ -1,12 +1,11 @@
 package com.example.internshipapp.controller;
 
+import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.exception.NoSuchRecordException;
-import com.example.internshipapp.model.Booking;
 import com.example.internshipapp.service.BookingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,8 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +39,11 @@ public class BookingControllerTests {
     @Mock
     private BookingService bookingService;
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    String TEST_START_OF_BOOKING = "08-08-2018 12:05";
+    String TEST_END_OF_BOOKING = "08-08-2018 13:35";
 
-    String TEST_START_OF_BOOKING = "2018-08-08 12:05";
-    LocalDateTime FORMATTED_START_OF_BOOKING = LocalDateTime.parse(TEST_START_OF_BOOKING, formatter);
-
-    String TEST_END_OF_BOOKING = "2018-08-08 13:35";
-    LocalDateTime FORMATTED_END_OF_BOOKING = LocalDateTime.parse(TEST_END_OF_BOOKING, formatter);
-
-
-    private Booking getMockedBooking() {
-        Booking booking = new Booking(FORMATTED_START_OF_BOOKING, FORMATTED_END_OF_BOOKING);
+    private BookingDto getMockedBooking() {
+        BookingDto booking = new BookingDto(TEST_START_OF_BOOKING, TEST_END_OF_BOOKING);
         booking.setId("abc");
         return booking;
     }
@@ -65,15 +56,14 @@ public class BookingControllerTests {
                 .build();
     }
 
-    @Ignore
     @Test
     public void getAllBookingsTest() throws Exception {
 
-        Booking booking = this.getMockedBooking();
-        List<Booking> allBookings = new ArrayList<>();
-        allBookings.add(booking);
+        BookingDto booking = this.getMockedBooking();
+        List<BookingDto> bookingList = new ArrayList<>();
+        bookingList.add(booking);
 
-        PageImpl<Booking> bookings = new PageImpl<>(allBookings);
+        PageImpl<BookingDto> bookings = new PageImpl<>(bookingList);
 
         when(bookingService.getBookings(Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
@@ -81,23 +71,22 @@ public class BookingControllerTests {
         mockMvc.perform(get("http://localhost:8080/bookings"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.content[0].startOfBooking", Matchers.is("[2018,8,8,12,5]")))
-                .andExpect(jsonPath("$.content[0].endOfBooking", Matchers.is("[2018,8,8,13,35]")));
+                .andExpect(jsonPath("$.content[0].startOfBooking", Matchers.is("08-08-2018 12:05")))
+                .andExpect(jsonPath("$.content[0].endOfBooking", Matchers.is("08-08-2018 13:35")));
     }
 
-    @Ignore
     @Test
     public void getBookingByIdTest() throws Exception {
 
-        Booking booking = this.getMockedBooking();
+        BookingDto booking = this.getMockedBooking();
 
         given(bookingService.getBookingById(booking.getId())).willReturn(booking);
 
         mockMvc.perform(get("http://localhost:8080/bookings/{id}", booking.getId()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.startOfBooking", Matchers.is("2018-08-08T12:05:00.0000000")))
-                .andExpect(jsonPath("$.endOfBooking", Matchers.is("2018-08-08T13:35:00.0000000")));
+                .andExpect(jsonPath("$.startOfBooking", Matchers.is("08-08-2018 12:05")))
+                .andExpect(jsonPath("$.endOfBooking", Matchers.is("08-08-2018 13:35")));
     }
 
     @Test
@@ -107,11 +96,10 @@ public class BookingControllerTests {
                 .andExpect(status().isNotFound());
     }
 
-    @Ignore
     @Test
     public void createBookingTest() throws Exception {
 
-        Booking booking = this.getMockedBooking();
+        BookingDto booking = this.getMockedBooking();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -121,10 +109,9 @@ public class BookingControllerTests {
                 .andExpect(status().isCreated());
     }
 
-    @Ignore
     @Test
-    public void updateTest() throws Exception {
-        Booking booking = this.getMockedBooking();
+    public void updateBookingTest() throws Exception {
+        BookingDto booking = this.getMockedBooking();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -143,9 +130,9 @@ public class BookingControllerTests {
     }
 
     @Test
-    public void deleteUserByIdTest() throws Exception {
+    public void deleteBookingByIdTest() throws Exception {
 
-        Booking booking = this.getMockedBooking();
+        BookingDto booking = this.getMockedBooking();
 
         mockMvc.perform(delete("/bookings/{id}", "abc")
                 .contentType(MediaType.APPLICATION_JSON))
