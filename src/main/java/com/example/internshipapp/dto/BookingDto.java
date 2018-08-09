@@ -18,7 +18,7 @@ public class BookingDto {
     @ValidDate
     private String endOfBooking;
 
-    public BookingDto(){};
+    public BookingDto() {}
 
     public BookingDto(@NotNull String startOfBooking, @NotNull String endOfBooking) {
         this.startOfBooking = startOfBooking;

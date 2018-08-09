@@ -39,8 +39,8 @@ public class BookingControllerTests {
     @Mock
     private BookingService bookingService;
 
-    String TEST_START_OF_BOOKING = "08-08-2018 12:05";
-    String TEST_END_OF_BOOKING = "08-08-2018 13:35";
+    private static final String TEST_START_OF_BOOKING = "08-08-2018 12:05";
+    private static final String TEST_END_OF_BOOKING = "08-08-2018 13:35";
 
     private BookingDto getMockedBooking() {
         BookingDto booking = new BookingDto(TEST_START_OF_BOOKING, TEST_END_OF_BOOKING);
@@ -69,10 +69,10 @@ public class BookingControllerTests {
                 .thenReturn(bookings);
 
         mockMvc.perform(get("http://localhost:8080/bookings"))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.content[0].startOfBooking", Matchers.is("08-08-2018 12:05")))
-                .andExpect(jsonPath("$.content[0].endOfBooking", Matchers.is("08-08-2018 13:35")));
+                .andExpect(jsonPath("$.content[0].startOfBooking", Matchers.is(TEST_START_OF_BOOKING)))
+                .andExpect(jsonPath("$.content[0].endOfBooking", Matchers.is(TEST_END_OF_BOOKING)));
     }
 
     @Test
@@ -83,10 +83,10 @@ public class BookingControllerTests {
         given(bookingService.getBookingById(booking.getId())).willReturn(booking);
 
         mockMvc.perform(get("http://localhost:8080/bookings/{id}", booking.getId()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.startOfBooking", Matchers.is("08-08-2018 12:05")))
-                .andExpect(jsonPath("$.endOfBooking", Matchers.is("08-08-2018 13:35")));
+                .andExpect(jsonPath("$.startOfBooking", Matchers.is(TEST_START_OF_BOOKING)))
+                .andExpect(jsonPath("$.endOfBooking", Matchers.is(TEST_END_OF_BOOKING)));
     }
 
     @Test
@@ -121,6 +121,7 @@ public class BookingControllerTests {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     public void deleteBookingWithUnknownIdTest() throws Exception {
         doThrow(NoSuchRecordException.class).when(bookingService).deleteBooking("def");
@@ -131,8 +132,6 @@ public class BookingControllerTests {
 
     @Test
     public void deleteBookingByIdTest() throws Exception {
-
-        BookingDto booking = this.getMockedBooking();
 
         mockMvc.perform(delete("/bookings/{id}", "abc")
                 .contentType(MediaType.APPLICATION_JSON))

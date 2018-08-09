@@ -18,7 +18,7 @@ public class BookingService {
 
     private BookingMapper bookingMapper;
     private BookingRepository bookingRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
 
     public BookingService(BookingMapper bookingMapper, BookingRepository bookingRepository) {
         this.bookingMapper = bookingMapper;

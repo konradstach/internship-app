@@ -1,6 +1,5 @@
 package com.example.internshipapp.service;
 
-import com.example.internshipapp.controller.RestResponseEntityExceptionHandler;
 import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.mapper.BookingMapper;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -28,8 +26,6 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BookingServiceTests {
 
-    private MockMvc mockMvc;
-
     @Mock
     private BookingRepository bookingRepository;
 
@@ -39,23 +35,21 @@ public class BookingServiceTests {
     @InjectMocks
     private BookingService bookingService;
 
-    LocalDateTime TEST_START_OF_BOOKING = LocalDateTime.of(2018, 8, 8, 12, 30);
-    LocalDateTime TEST_END_OF_BOOKING = LocalDateTime.of(2018, 8, 8, 14, 10);
+    private static final String TEST_ID = "abc";
+    private static final LocalDateTime TEST_START_OF_BOOKING = LocalDateTime.of(2018, 8, 8, 12, 30);
+    private static final LocalDateTime TEST_END_OF_BOOKING = LocalDateTime.of(2018, 8, 8, 14, 10);
 
     private Booking getMockedBooking() {
         Booking booking = new Booking(TEST_START_OF_BOOKING, TEST_END_OF_BOOKING);
-        booking.setId("abc");
+        booking.setId(TEST_ID);
         return booking;
     }
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(bookingService)
-                .setControllerAdvice(new RestResponseEntityExceptionHandler())
-                .build();
 
-        when(bookingRepository.findById("abc")).thenReturn(java.util.Optional.ofNullable(this.getMockedBooking()));
-        when(bookingRepository.getById("abc")).thenReturn(this.getMockedBooking());
+        when(bookingRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(this.getMockedBooking()));
+        when(bookingRepository.getById(TEST_ID)).thenReturn(this.getMockedBooking());
         when(bookingMapper.toDto(any(Booking.class))).thenCallRealMethod();
         when(bookingMapper.toEntity(any(BookingDto.class))).thenCallRealMethod();
     }
@@ -73,7 +67,7 @@ public class BookingServiceTests {
 
         BookingDto bookingDto = bookingService.getBookings(new PageRequest(0, 2)).getContent().get(0);
 
-        Assert.assertEquals("abc", bookingDto.getId());
+        Assert.assertEquals(TEST_ID, bookingDto.getId());
         Assert.assertEquals("08-08-2018 12:30", bookingDto.getStartOfBooking());
         Assert.assertEquals("08-08-2018 14:10", bookingDto.getEndOfBooking());
     }
@@ -81,8 +75,8 @@ public class BookingServiceTests {
     @Test
     public void getBookingByIdTest() {
 
-        BookingDto bookingFromService = bookingService.getBookingById("abc");
-        Assert.assertEquals("abc", bookingFromService.getId());
+        BookingDto bookingFromService = bookingService.getBookingById(TEST_ID);
+        Assert.assertEquals(TEST_ID, bookingFromService.getId());
         Assert.assertEquals("08-08-2018 12:30", bookingFromService.getStartOfBooking());
         Assert.assertEquals("08-08-2018 14:10", bookingFromService.getEndOfBooking());
     }
@@ -106,7 +100,7 @@ public class BookingServiceTests {
 
         BookingDto bookingFromService = bookingService.createBooking(bookingDto);
 
-        Assert.assertEquals("abc", bookingFromService.getId());
+        Assert.assertEquals(TEST_ID, bookingFromService.getId());
         Assert.assertEquals("08-08-2018 12:30", bookingFromService.getStartOfBooking());
         Assert.assertEquals("08-08-2018 14:10", bookingFromService.getEndOfBooking());
     }
@@ -136,8 +130,6 @@ public class BookingServiceTests {
     @Test
     public void deleteAllBookingsTest() {
 
-        Booking booking = this.getMockedBooking();
-
         bookingService.deleteAllBookings();
 
         Assert.assertEquals(bookingRepository.count(), 0);
@@ -147,9 +139,9 @@ public class BookingServiceTests {
     public void deleteBookingByIdTest() {
 
         Booking booking = this.getMockedBooking();
-        when(bookingRepository.getById("abc")).thenReturn(booking);
+        when(bookingRepository.getById(TEST_ID)).thenReturn(booking);
 
-        bookingService.deleteBooking("abc");
+        bookingService.deleteBooking(TEST_ID);
 
     }
 

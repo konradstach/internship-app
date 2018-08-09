@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,28 +21,27 @@ public class BookingController {
     }
 
     @GetMapping
-    @ResponseBody
     public Page<BookingDto> getBookings(@PageableDefault Pageable pageRequest) {
         return bookingService.getBookings(pageRequest);
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
     public BookingDto getBookingById(@PathVariable(name = "id") String id) {
         return bookingService.getBookingById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BookingDto> createUser(@RequestBody @Valid BookingDto bookingDto) {
+    public BookingDto createUser(@RequestBody @Valid BookingDto bookingDto) {
 
-        return new ResponseEntity<>(bookingService.createBooking(bookingDto), HttpStatus.CREATED);
+        return bookingService.createBooking(bookingDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<BookingDto> updateBooking(@PathVariable(name = "id") String id, @Valid @RequestBody BookingDto bookingDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public BookingDto updateBooking(@PathVariable(name = "id") String id, @Valid @RequestBody BookingDto bookingDto) {
 
-        return new ResponseEntity<>(bookingService.updateBooking(bookingDto), HttpStatus.OK);
+        return bookingService.updateBooking(bookingDto);
     }
 
     @DeleteMapping
