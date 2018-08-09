@@ -1,21 +1,39 @@
 package com.example.internshipapp.controller;
 
+import com.example.internshipapp.exception.ErrorResponse;
+import com.example.internshipapp.exception.FieldValidationErrorResponse;
 import com.example.internshipapp.exception.NoSuchRecordException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+import java.util.ArrayList;
+import java.util.List;
+
+@RestControllerAdvice
+public class RestResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchRecordException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleException(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    public ErrorResponse handleNoSuchRecordException(NoSuchRecordException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND.getReasonPhrase() + " (404)", ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotValidFieldsException(MethodArgumentNotValidException ex) {
+
+        List<Object> messages = new ArrayList<>();
+
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
+        for (int i = 0; i < fieldErrors.size(); i++) {
+            messages.add(new FieldValidationErrorResponse(fieldErrors.get(i).getField(), objectErrors.get(i).getDefaultMessage()));
+        }
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase() + " (400)", messages);
     }
 }

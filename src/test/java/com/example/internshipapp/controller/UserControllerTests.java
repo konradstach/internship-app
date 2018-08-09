@@ -11,17 +11,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -54,27 +60,29 @@ public class UserControllerTests {
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
 
-    //TODO yet don't know how to extract List<> from Page<>
-    @Ignore
     @Test
     public void getUsersTest() throws Exception {
 
         User user = this.getMockedUser();
-        List<User> allUsers = singletonList(user);
-        given(userService.getUsersUnpaged()).willReturn(allUsers);
-        userController.createUser(user);
+        List<User> allUsers = new ArrayList<>();
+        allUsers.add(user);
 
-        mockMvc.perform(get("http://localhost:8080/users/unpaged"))
+        PageImpl<User> users = new PageImpl<>(allUsers);
+
+        when(userService.getUsers(Mockito.anyString(), Mockito.any(Pageable.class)))
+                .thenReturn(users);
+
+        mockMvc.perform(get("http://localhost:8080/users"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$.[0].username", Matchers.is("testUsername")))
-                .andExpect(jsonPath("$.[0].firstName", Matchers.is("testFirstName")))
-                .andExpect(jsonPath("$.[0].lastName", Matchers.is("testLastName")))
-                .andExpect(jsonPath("$.[0].toPay", Matchers.is(8.0)));
+                .andExpect(jsonPath("$.content[0].username", Matchers.is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.content[0].firstName", Matchers.is(TEST_FIRST_NAME)))
+                .andExpect(jsonPath("$.content[0].lastName", Matchers.is(TEST_LAST_NAME)))
+                .andExpect(jsonPath("$.content[0].toPay", Matchers.is(TEST_TO_PAY)));
     }
 
     @Test
@@ -87,10 +95,10 @@ public class UserControllerTests {
         mockMvc.perform(get("http://localhost:8080/users/{id}", user.getId()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.username", Matchers.is("testUsername")))
-                .andExpect(jsonPath("$.firstName", Matchers.is("testFirstName")))
-                .andExpect(jsonPath("$.lastName", Matchers.is("testLastName")))
-                .andExpect(jsonPath("$.toPay", Matchers.is(8.0)));
+                .andExpect(jsonPath("$.username", Matchers.is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.firstName", Matchers.is(TEST_FIRST_NAME)))
+                .andExpect(jsonPath("$.lastName", Matchers.is(TEST_LAST_NAME)))
+                .andExpect(jsonPath("$.toPay", Matchers.is(TEST_TO_PAY)));
     }
 
     @Test
@@ -135,8 +143,6 @@ public class UserControllerTests {
 
     @Test
     public void deleteUserByIdTest() throws Exception {
-
-        User user = this.getMockedUser();
 
         mockMvc.perform(delete("/users/{id}", "abc")
                 .contentType(MediaType.APPLICATION_JSON))

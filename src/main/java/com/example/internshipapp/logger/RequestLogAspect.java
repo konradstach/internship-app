@@ -1,6 +1,5 @@
 package com.example.internshipapp.logger;
 
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,18 +9,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 
 @Aspect
 @Component
-@Slf4j
 public class RequestLogAspect {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Pointcut("within(com.example.internshipapp.controller..*)")
-    public void controllerClassMethods() {
-    };
+    public void controllerClassMethods() {}
 
     @Around("controllerClassMethods()")
     public Object log(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
