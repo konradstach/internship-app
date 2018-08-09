@@ -79,10 +79,10 @@ public class UserControllerTests {
         mockMvc.perform(get("http://localhost:8080/users"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.content[0].username", Matchers.is("testUsername")))
-                .andExpect(jsonPath("$.content[0].firstName", Matchers.is("testFirstName")))
-                .andExpect(jsonPath("$.content[0].lastName", Matchers.is("testLastName")))
-                .andExpect(jsonPath("$.content[0].toPay", Matchers.is(8.0)));
+                .andExpect(jsonPath("$.content[0].username", Matchers.is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.content[0].firstName", Matchers.is(TEST_FIRST_NAME)))
+                .andExpect(jsonPath("$.content[0].lastName", Matchers.is(TEST_LAST_NAME)))
+                .andExpect(jsonPath("$.content[0].toPay", Matchers.is(TEST_TO_PAY)));
     }
 
     @Test
@@ -95,10 +95,10 @@ public class UserControllerTests {
         mockMvc.perform(get("http://localhost:8080/users/{id}", user.getId()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.username", Matchers.is("testUsername")))
-                .andExpect(jsonPath("$.firstName", Matchers.is("testFirstName")))
-                .andExpect(jsonPath("$.lastName", Matchers.is("testLastName")))
-                .andExpect(jsonPath("$.toPay", Matchers.is(8.0)));
+                .andExpect(jsonPath("$.username", Matchers.is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.firstName", Matchers.is(TEST_FIRST_NAME)))
+                .andExpect(jsonPath("$.lastName", Matchers.is(TEST_LAST_NAME)))
+                .andExpect(jsonPath("$.toPay", Matchers.is(TEST_TO_PAY)));
     }
 
     @Test
@@ -143,8 +143,6 @@ public class UserControllerTests {
 
     @Test
     public void deleteUserByIdTest() throws Exception {
-
-        User user = this.getMockedUser();
 
         mockMvc.perform(delete("/users/{id}", "abc")
                 .contentType(MediaType.APPLICATION_JSON))

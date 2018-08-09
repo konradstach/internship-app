@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -69,49 +71,58 @@ public class UserServiceTests {
 
         User user = this.getMockedUser();
 
-        when(userRepository.findById("abc")).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
 
-        User userFromService = userService.getUserById("abc");
+        User userFromService = userService.getUserById(TEST_ID);
         Assert.assertEquals(userFromService, user);
     }
 
     @Test(expected = NoSuchRecordException.class)
     public void getUserByUnknownIdShouldThrowNoSuchRecordException() {
 
-        when(userService.getUserById("aaa")).thenThrow(NoSuchRecordException.class);
+        when(userRepository.findById("aaa")).thenThrow(NoSuchRecordException.class);
         userService.getUserById("aaa");
     }
 
-    //TODO not working as expected, returns null
-    @Ignore
     @Test
     public void createNewUserTest() {
 
         User user = this.getMockedUser();
+        when(userRepository.save(any(User.class))).thenReturn(this.getMockedUser());
 
         Assert.assertNotNull(userService.createUser(user));
     }
 
-    //TODO not working as expected, returns null
     @Test
-    @Ignore
     public void updateUser() {
 
         User user = this.getMockedUser();
+        when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
 
         User updatedUser = new User("updatedUsername", "updatedPassword", "updatedFirstName", "updatedLastName", 5);
-        updatedUser.setId("abc");
+        updatedUser.setId(TEST_ID);
+
+        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+
         userService.updateUser(updatedUser);
 
-        when(userRepository.findById("abc")).thenReturn(java.util.Optional.ofNullable(user));
+        Assert.assertEquals("updatedUsername", updatedUser.getUsername());
+        Assert.assertEquals("updatedPassword", updatedUser.getPassword());
+        Assert.assertEquals("updatedFirstName", updatedUser.getFirstName());
+        Assert.assertEquals("updatedLastName", updatedUser.getLastName());
+        Assert.assertEquals(5, updatedUser.getToPay(), 0.001);
+    }
 
-        Assert.assertEquals(updatedUser, user);
+    @Test(expected = NoSuchRecordException.class)
+    public void updateUnexistingUser(){
+
+        User user = this.getMockedUser();
+        user.setId("aaa");
+        userService.updateUser(user);
     }
 
     @Test
     public void deleteAllUsers() {
-
-        User user = this.getMockedUser();
 
         userService.deleteAllUsers();
 
@@ -122,9 +133,9 @@ public class UserServiceTests {
     public void deleteUserById() {
 
         User user = this.getMockedUser();
-        when(userRepository.findById("abc")).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
 
-        userService.deleteUser("abc");
+        userService.deleteUser(TEST_ID);
     }
 
     @Test(expected = NoSuchRecordException.class)
