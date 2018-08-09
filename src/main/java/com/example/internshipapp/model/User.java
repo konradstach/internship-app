@@ -40,8 +40,7 @@ public class User {
         this.toPay = toPay;
     }
 
-    public User() {
-    }
+    public User() {}
 
     public String getId() {
         return id;

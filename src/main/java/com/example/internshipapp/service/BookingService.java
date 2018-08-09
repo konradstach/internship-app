@@ -5,6 +5,7 @@ import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.mapper.BookingMapper;
 import com.example.internshipapp.model.Booking;
 import com.example.internshipapp.repository.BookingRepository;
+import io.swagger.annotations.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

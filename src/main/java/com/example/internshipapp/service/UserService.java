@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -25,10 +25,6 @@ public class UserService {
 
         logger.info("Getting all users");
         return userRepository.findByUsernameContainingIgnoreCase(username, pageable);
-    }
-
-    public List<User> getUsersUnpaged() {
-        return userRepository.findAll();
     }
 
     public User getUserById(String id) {

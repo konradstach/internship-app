@@ -8,7 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, String>, PagingAndSortingRepository<User, String> {
+public interface UserRepository extends MongoRepository<User, String>{
 
     Page<User> findByUsernameContainingIgnoreCase(String firstName, Pageable pageable);
 
