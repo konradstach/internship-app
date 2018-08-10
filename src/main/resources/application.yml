@@ -4,6 +4,9 @@ mongo:
   port: 27017
 
 spring:
+  profiles:
+    include: dev, tests
+    active: tests
   jackson:
     serialization:
       write_dates_as_timestamps: false

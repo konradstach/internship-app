@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,7 +33,7 @@ public class UserController {
     @GetMapping("/{id}")
     @ApiOperation("Retreive user with given id")
     @ApiResponses({
-            @ApiResponse(code = 404, message = "User with given id doesn't exist")
+            @ApiResponse(code = 404, message = "user with given id doesn't exist")
     })
     public User getUserById(@PathVariable(name = "id") String id) {
         return userService.getUserById(id);
@@ -50,11 +49,11 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @ApiResponses({
-            @ApiResponse(code = 404, message = "User with given id doesn't exist")
+            @ApiResponse(code = 404, message = "user with given id doesn't exist")
     })
     @ApiOperation("Modify user data")
-    public void modifyUser(@PathVariable(name = "id") String id, @Valid @RequestBody User user) {
-        userService.updateUser(user);
+    public User modifyUser(@PathVariable(name = "id") String id, @Valid @RequestBody User user) {
+        return userService.updateUser(user);
     }
 
     @DeleteMapping
@@ -69,15 +68,15 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ApiResponses({
-            @ApiResponse(code = 404, message = "User with given id doesn't exist"),
-            @ApiResponse(code = 204, message = "User deleted successfully")
+            @ApiResponse(code = 404, message = "user with given id doesn't exist"),
+            @ApiResponse(code = 204, message = "user deleted successfully")
     })
     @ApiOperation(httpMethod = "DELETE", value = "Delete user with given id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(
             @ApiParam(value = "Id to lookup for", required = true)
             @PathVariable(name = "id") String id) {
-        userService.deleteUser(id);
+        userService.deleteUserById(id);
     }
 
 }

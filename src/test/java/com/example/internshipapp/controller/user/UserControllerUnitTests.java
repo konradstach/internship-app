@@ -1,12 +1,13 @@
-package com.example.internshipapp.controller;
+package com.example.internshipapp.controller.user;
 
+import com.example.internshipapp.controller.RestResponseEntityExceptionHandler;
+import com.example.internshipapp.controller.UserController;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,8 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class UserControllerTests {
+public class UserControllerUnitTests {
 
     private MockMvc mockMvc;
 
@@ -135,7 +134,7 @@ public class UserControllerTests {
 
     @Test
     public void deleteUserWithUnknownIdTest() throws Exception {
-        doThrow(NoSuchRecordException.class).when(userService).deleteUser("100");
+        doThrow(NoSuchRecordException.class).when(userService).deleteUserById("100");
         mockMvc.perform(delete("/users/{id}", 100)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

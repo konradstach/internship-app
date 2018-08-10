@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
@@ -32,11 +32,11 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            logger.info(String.format("User with id =%s found.", id));
+            logger.info(String.format("user with id =%s found.", id));
             return userOptional.get();
         } else {
-            logger.warn(String.format("User with id =%s not found.", id));
-            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
+            logger.warn(String.format("user with id =%s not found.", id));
+            throw new NoSuchRecordException(String.format("user with id = %s not found", id));
         }
     }
 
@@ -53,13 +53,13 @@ public class UserService {
 
         if (!userFromDb.isPresent()) {
 
-            logger.warn(String.format("User with id =%s not found", userFromUi.getId()));
-            throw new NoSuchRecordException(String.format("User with id = %s not found", userFromUi.getId()));
+            logger.warn(String.format("user with id =%s not found", userFromUi.getId()));
+            throw new NoSuchRecordException(String.format("user with id = %s not found", userFromUi.getId()));
         }
 
         User user = User.clone(userFromUi);
 
-        logger.info(String.format("User with id =%s updated", userFromUi.getId()));
+        logger.info(String.format("user with id =%s updated", userFromUi.getId()));
         return userRepository.save(user);
     }
 
@@ -69,15 +69,15 @@ public class UserService {
         logger.warn("All users deleted");
     }
 
-    public void deleteUser(String id) {
+    public void deleteUserById(String id) {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
             userRepository.deleteById(id);
-            logger.warn(String.format("User with id =%s deleted", id));
+            logger.warn(String.format("user with id =%s deleted", id));
         } else {
-            logger.warn(String.format("User with id = %s not found", id));
-            throw new NoSuchRecordException(String.format("User with id = %s not found", id));
+            logger.warn(String.format("user with id = %s not found", id));
+            throw new NoSuchRecordException(String.format("user with id = %s not found", id));
         }
     }
 }
