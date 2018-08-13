@@ -1,7 +1,7 @@
 package com.example.internshipapp.dto;
 
 import org.springframework.data.annotation.Id;
-import validation.ValidDate;
+import com.example.internshipapp.ValidDate;
 
 import javax.validation.constraints.NotNull;
 

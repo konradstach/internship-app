@@ -1,4 +1,4 @@
-package validation;
+package com.example.internshipapp;
 
 import com.example.internshipapp.mapper.DateMapper;
 
