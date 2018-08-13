@@ -1,7 +1,5 @@
-package com.example.internshipapp.controller.booking;
+package com.example.internshipapp.controller;
 
-import com.example.internshipapp.controller.BookingController;
-import com.example.internshipapp.controller.RestResponseEntityExceptionHandler;
 import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.service.BookingService;

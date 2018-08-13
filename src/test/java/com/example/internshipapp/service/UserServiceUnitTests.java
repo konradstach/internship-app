@@ -1,10 +1,9 @@
-package com.example.internshipapp.service.user;
+package com.example.internshipapp.service;
 
 import com.example.internshipapp.controller.RestResponseEntityExceptionHandler;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
-import com.example.internshipapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +70,7 @@ public class UserServiceUnitTests {
 
         User user = this.getMockedUser();
 
-        when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.getById(TEST_ID)).thenReturn(user);
 
         User userFromService = userService.getUserById(TEST_ID);
         Assert.assertEquals(userFromService, user);

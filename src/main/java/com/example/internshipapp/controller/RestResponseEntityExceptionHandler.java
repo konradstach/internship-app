@@ -25,15 +25,15 @@ public class RestResponseEntityExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNotValidFieldsException(MethodArgumentNotValidException ex) {
+    public List<FieldValidationErrorResponse> handleNotValidFieldsException(MethodArgumentNotValidException ex) {
 
-        List<Object> messages = new ArrayList<>();
+        List<FieldValidationErrorResponse> messages = new ArrayList<>();
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
         for (int i = 0; i < fieldErrors.size(); i++) {
             messages.add(new FieldValidationErrorResponse(fieldErrors.get(i).getField(), objectErrors.get(i).getDefaultMessage()));
         }
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase() + " (400)", messages);
+        return messages;
     }
 }

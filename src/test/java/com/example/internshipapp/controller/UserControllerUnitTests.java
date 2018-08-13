@@ -1,7 +1,5 @@
-package com.example.internshipapp.controller.user;
+package com.example.internshipapp.controller;
 
-import com.example.internshipapp.controller.RestResponseEntityExceptionHandler;
-import com.example.internshipapp.controller.UserController;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.model.User;
 import com.example.internshipapp.service.UserService;

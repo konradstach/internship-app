@@ -29,11 +29,11 @@ public class UserService {
 
     public User getUserById(String id) {
 
-        Optional<User> userOptional = userRepository.findById(id);
+        User user = userRepository.getById(id);
 
-        if (userOptional.isPresent()) {
+        if (user != null) {
             logger.info(String.format("user with id =%s found.", id));
-            return userOptional.get();
+            return user;
         } else {
             logger.warn(String.format("user with id =%s not found.", id));
             throw new NoSuchRecordException(String.format("user with id = %s not found", id));

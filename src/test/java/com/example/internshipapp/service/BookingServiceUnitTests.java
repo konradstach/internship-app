@@ -1,11 +1,10 @@
-package com.example.internshipapp.service.booking;
+package com.example.internshipapp.service;
 
 import com.example.internshipapp.dto.BookingDto;
 import com.example.internshipapp.exception.NoSuchRecordException;
 import com.example.internshipapp.mapper.BookingMapper;
 import com.example.internshipapp.model.Booking;
 import com.example.internshipapp.repository.BookingRepository;
-import com.example.internshipapp.service.BookingService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
