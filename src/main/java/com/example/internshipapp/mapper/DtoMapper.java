@@ -17,7 +17,6 @@ public interface DtoMapper<Entity, DTO> {
     }
 
     default Page<DTO> pageToDtos(Page<Entity> entities) {
-        List<DTO> dtoList = entities.stream().map(this::toDto).collect(Collectors.toList());
-        return new PageImpl<>(dtoList, entities.getPageable(), entities.getTotalElements());
+        return entities.map(entity -> toDto(entity));
     }
 }

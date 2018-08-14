@@ -25,6 +25,7 @@
         <springfox-swagger-ui.version>2.7.0</springfox-swagger-ui.version>
         <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
         <jackson-datatype-jsr310.version>2.9.6</jackson-datatype-jsr310.version>
+        <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
     </properties>
 
     <dependencies>
@@ -34,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data</artifactId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,6 +78,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger-ui.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
         </dependency>
     </dependencies>
 

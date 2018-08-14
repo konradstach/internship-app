@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class BookingServiceTests {
+public class BookingServiceUnitTests {
 
     @Mock
     private BookingRepository bookingRepository;
@@ -141,7 +140,7 @@ public class BookingServiceTests {
         Booking booking = this.getMockedBooking();
         when(bookingRepository.getById(TEST_ID)).thenReturn(booking);
 
-        bookingService.deleteBooking(TEST_ID);
+        bookingService.deleteBookingById(TEST_ID);
 
     }
 
@@ -149,6 +148,6 @@ public class BookingServiceTests {
     public void deleteUnexistingUserShouldThrowNoSuchRecordException() {
 
         doThrow(NoSuchRecordException.class).when(bookingRepository).deleteById("aaa");
-        bookingService.deleteBooking("aaa");
+        bookingService.deleteBookingById("aaa");
     }
 }

@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class BookingControllerTests {
+public class BookingControllerUnitTests {
 
     private MockMvc mockMvc;
 
@@ -124,7 +124,7 @@ public class BookingControllerTests {
 
     @Test
     public void deleteBookingWithUnknownIdTest() throws Exception {
-        doThrow(NoSuchRecordException.class).when(bookingService).deleteBooking("def");
+        doThrow(NoSuchRecordException.class).when(bookingService).deleteBookingById("def");
         mockMvc.perform(delete("/bookings/{id}", "def")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

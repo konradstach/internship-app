@@ -1,4 +1,4 @@
-package validation;
+package com.example.internshipapp.validation;
 
 
 import javax.validation.Constraint;

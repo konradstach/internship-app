@@ -6,7 +6,6 @@ import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,13 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class UserServiceTests {
+public class UserServiceUnitTests {
 
     private MockMvc mockMvc;
 
@@ -38,7 +38,6 @@ public class UserServiceTests {
     private static final String TEST_FIRST_NAME = "testFirstName";
     private static final String TEST_LAST_NAME = "testLastName";
     private static final double TEST_TO_PAY = 8;
-
 
     private User getMockedUser() {
         User user = new User(TEST_USERNAME, TEST_PASSWORD, TEST_FIRST_NAME, TEST_LAST_NAME, TEST_TO_PAY);
@@ -71,7 +70,7 @@ public class UserServiceTests {
 
         User user = this.getMockedUser();
 
-        when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.getById(TEST_ID)).thenReturn(user);
 
         User userFromService = userService.getUserById(TEST_ID);
         Assert.assertEquals(userFromService, user);
@@ -114,7 +113,7 @@ public class UserServiceTests {
     }
 
     @Test(expected = NoSuchRecordException.class)
-    public void updateUnexistingUser(){
+    public void updateUnexistingUser() {
 
         User user = this.getMockedUser();
         user.setId("aaa");
@@ -135,14 +134,12 @@ public class UserServiceTests {
         User user = this.getMockedUser();
         when(userRepository.findById(TEST_ID)).thenReturn(java.util.Optional.ofNullable(user));
 
-        userService.deleteUser(TEST_ID);
+        userService.deleteUserById(TEST_ID);
     }
 
     @Test(expected = NoSuchRecordException.class)
     public void deleteUnexistingUserShouldThrowNoSuchRecordException() {
 
-        userService.deleteUser("aaa");
+        userService.deleteUserById("aaa");
     }
-
-
 }

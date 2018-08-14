@@ -83,6 +83,6 @@ public class BookingController {
     public void deleteBookingById(
             @ApiParam(value = "Id to lookup for", required = true)
             @PathVariable(name = "id") String id) {
-        bookingService.deleteBooking(id);
+        bookingService.deleteBookingById(id);
     }
 }

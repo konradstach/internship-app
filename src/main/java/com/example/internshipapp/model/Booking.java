@@ -16,7 +16,7 @@ public class Booking {
 
     private LocalDateTime endOfBooking;
 
-    public Booking() {};
+    public Booking() {}
 
     public Booking(LocalDateTime startOfBooking, LocalDateTime endOfBooking) {
         this.startOfBooking = startOfBooking;
