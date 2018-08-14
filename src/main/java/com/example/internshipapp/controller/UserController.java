@@ -78,5 +78,4 @@ public class UserController {
             @PathVariable(name = "id") String id) {
         userService.deleteUserById(id);
     }
-
 }
