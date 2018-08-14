@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,14 +47,6 @@ public class BookingControllerIntegrationTests {
     @Before
     public void setup() {
 
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(5000);
-        requestFactory.setReadTimeout(5000);
-
-        restTemplate.setRequestFactory(requestFactory);
-
         headers = new HttpHeaders();
         MediaType mediaType = new MediaType("application", "merge-patch+json");
         headers.setContentType(mediaType);
@@ -83,7 +73,7 @@ public class BookingControllerIntegrationTests {
         ResponseEntity<BookingDto> bookingResponse = restTemplate.getForEntity("http://localhost:8080/bookings/testId1", BookingDto.class);
 
         assertThat(bookingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(bookingResponse.getBody().equals(new Booking(TEST_START_OF_BOOKING, TEST_END_OF_BOOKING)));
+        assertThat(bookingResponse.getBody().equals(new BookingDto(START_OF_BOOKING, END_OF_BOOKING)));
     }
 
     @Test
@@ -108,10 +98,10 @@ public class BookingControllerIntegrationTests {
     @Test
     public void createNewBookingWithInvalidFieldTest() {
 
-        BookingDto bookingwithInvalidField = testBookingDto;
+        BookingDto bookingWithInvalidField = testBookingDto;
         testBookingDto.setStartOfBooking("0000-0000");
         testBookingDto.setId("testId3");
-        ResponseEntity<ArrayList> bookingResponse = restTemplate.postForEntity("http://localhost:8080/bookings", bookingwithInvalidField, ArrayList.class);
+        ResponseEntity<ArrayList> bookingResponse = restTemplate.postForEntity("http://localhost:8080/bookings", bookingWithInvalidField, ArrayList.class);
 
         assertThat(bookingResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(bookingResponse.getBody().get(0).equals(new FieldValidationErrorResponse("startOfBooking", "Invalid date, correct format is: dd-MM-yyyy HH:mm")));

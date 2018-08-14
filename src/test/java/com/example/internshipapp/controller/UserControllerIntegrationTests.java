@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 
@@ -46,14 +44,6 @@ public class UserControllerIntegrationTests {
 
     @Before
     public void setup() {
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(5000);
-        requestFactory.setReadTimeout(5000);
-
-        restTemplate.setRequestFactory(requestFactory);
 
         headers = new HttpHeaders();
         MediaType mediaType = new MediaType("application", "merge-patch+json");
