@@ -5,12 +5,17 @@ import com.example.internshipapp.model.User;
 import com.example.internshipapp.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@CacheConfig(cacheNames = {"users"})
 @Service
 public class UserService {
 
@@ -21,12 +26,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    // Adnotating getUsers method by cacheable makes it work correctly only when some username is added as a request parameter
+
     public Page<User> getUsers(String username, Pageable pageable) {
 
         logger.info("Getting all users");
         return userRepository.findByUsernameContainingIgnoreCase(username, pageable);
     }
 
+    @Cacheable(key = "#id")
     public User getUserById(String id) {
 
         User user = userRepository.getById(id);
@@ -40,6 +48,7 @@ public class UserService {
         }
     }
 
+    @CachePut(key = "#result.id", unless = "#result == null")
     public User createUser(User userToCreate) {
 
         User user = User.clone(userToCreate);
@@ -47,6 +56,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @CachePut(key="#userFromUi.id")
     public User updateUser(final User userFromUi) {
 
         Optional<User> userFromDb = userRepository.findById(userFromUi.getId());
@@ -63,12 +73,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @CacheEvict(allEntries = true)
     public void deleteAllUsers() {
 
         userRepository.deleteAll();
         logger.warn("All users deleted");
     }
 
+    @CacheEvict(key = "#id")
     public void deleteUserById(String id) {
         Optional<User> user = userRepository.findById(id);
 

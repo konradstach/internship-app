@@ -7,12 +7,17 @@ import com.example.internshipapp.model.Booking;
 import com.example.internshipapp.repository.BookingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@CacheConfig(cacheNames = {"bookings"})
 @Service
 public class BookingService {
 
@@ -30,6 +35,7 @@ public class BookingService {
         return bookingMapper.pageToDtos(bookingRepository.findAll(pageable));
     }
 
+    @Cacheable(key = "#id")
     public BookingDto getBookingById(String id) {
 
         Optional<Booking> bookingOptional = bookingRepository.findById(id);
@@ -43,6 +49,7 @@ public class BookingService {
         }
     }
 
+    @CachePut(key = "#result.id", unless = "#result == null")
     public BookingDto createBooking(final BookingDto bookingDto) {
 
         logger.info("New booking created");
@@ -50,6 +57,7 @@ public class BookingService {
         return bookingMapper.toDto(savedBooking);
     }
 
+    @CachePut(key="#bookingFromUi.id")
     public BookingDto updateBooking(final BookingDto bookingFromUi) {
 
         Optional<Booking> bookingFromDb = bookingRepository.findById(bookingFromUi.getId());
@@ -65,12 +73,14 @@ public class BookingService {
         return bookingMapper.toDto(savedBooking);
     }
 
+    @CacheEvict(allEntries = true)
     public void deleteAllBookings() {
 
         bookingRepository.deleteAll();
         logger.warn("All bookings deleted");
     }
 
+    @CacheEvict(key = "#id")
     public void deleteBookingById(String id) {
         Optional<Booking> booking = bookingRepository.findById(id);
 
