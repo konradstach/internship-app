@@ -23,7 +23,7 @@ public class SendGridEmailService {
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
     private static final Logger logger = LoggerFactory.getLogger(SendGridEmailService.class);
-    
+
     public void sendMail(User savedUser) {
 
         Email from = new Email("test@example.com");
