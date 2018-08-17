@@ -1,7 +1,13 @@
 package com.example.internshipapp.service;
 
 import com.example.internshipapp.model.User;
-import com.sendgrid.*;
+import com.sendgrid.Content;
+import com.sendgrid.Email;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +20,10 @@ import java.io.IOException;
 @Async
 public class SendGridEmailService {
 
-
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
     private static final Logger logger = LoggerFactory.getLogger(SendGridEmailService.class);
-
-
+    
     public void sendMail(User savedUser) {
 
         Email from = new Email("test@example.com");
