@@ -14,3 +14,7 @@ spring:
     web:
       pageable:
         default-page-size: 10
+
+sendgrid:
+  api:
+    key: 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
