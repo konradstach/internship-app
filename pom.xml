@@ -26,6 +26,7 @@
         <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
         <jackson-datatype-jsr310.version>2.9.6</jackson-datatype-jsr310.version>
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
+        <sendgrid-java.version>4.1.2</sendgrid-java.version>
     </properties>
 
     <dependencies>
@@ -83,6 +84,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>${sendgrid-java.version}</version>
         </dependency>
     </dependencies>
 

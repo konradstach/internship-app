@@ -21,12 +21,14 @@ public class UserService {
 
     private UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private SendGridEmailService sendGridEmailService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, SendGridEmailService sendGridEmailService) {
         this.userRepository = userRepository;
+        this.sendGridEmailService = sendGridEmailService;
     }
 
-    // Adnotating getUsers method by cacheable makes it work correctly only when some username is added as a request parameter
+// Adnotating getUsers method by cacheable makes it work correctly only when some username is added as a request parameter
 
     public Page<User> getUsers(String username, Pageable pageable) {
 
@@ -53,10 +55,12 @@ public class UserService {
 
         User user = User.clone(userToCreate);
         logger.info("New user created");
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        sendGridEmailService.sendMail(savedUser);
+        return savedUser;
     }
 
-    @CachePut(key="#userFromUi.id")
+    @CachePut(key = "#userFromUi.id")
     public User updateUser(final User userFromUi) {
 
         Optional<User> userFromDb = userRepository.findById(userFromUi.getId());
